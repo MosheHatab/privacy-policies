@@ -1,0 +1,20 @@
+---
+description: No code/doc drift. Updates to plan-covered behavior must update the corresponding doc in the same change set.
+alwaysApply: true
+---
+
+# R9 — No doc drift
+
+If your change touches anything covered by these docs, update the relevant doc **in the same change set**:
+
+| Code area | Doc(s) to update |
+|---|---|
+| `backend/src/services/MatchService.ts`, socket handlers, scoring, timer | [`docs/MATCH_FLOW.md`](mdc:docs/MATCH_FLOW.md) |
+| `backend/src/config/gameConfig.ts`, `Assets/Scripts/Config/GameMatchConfig.cs` | [`docs/PLAN.md`](mdc:docs/PLAN.md), [`docs/AGENTS.md`](mdc:docs/AGENTS.md), the magic-values rule |
+| `backend/src/rest/profile.ts`, `redeem.ts`, `economy.ts` | [`docs/PROFILE_AND_ECONOMY.md`](mdc:docs/PROFILE_AND_ECONOMY.md) |
+| `backend/src/rest/social.ts`, `scoreboards.ts` | [`docs/SOCIAL_AND_SCOREBOARDS.md`](mdc:docs/SOCIAL_AND_SCOREBOARDS.md) |
+| Any new Unity UIKit prefab / shell | [`docs/UI_CONTRACT.md`](mdc:docs/UI_CONTRACT.md), [`docs/SCREENS.md`](mdc:docs/SCREENS.md) |
+| Any new privacy / consent change | [`docs/PRIVACY_AND_LEGAL.md`](mdc:docs/PRIVACY_AND_LEGAL.md) |
+| New gameplay tunable | [`docs/AGENTS.md`](mdc:docs/AGENTS.md) (R5/R10) and the magic-values rule |
+
+If you cannot find a clear home for the doc update, add a section to the most relevant file rather than skipping the update.

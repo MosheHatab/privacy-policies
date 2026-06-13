@@ -10,5 +10,9 @@ Desktop.ini
 *.swo
 *~
 
+# Python (skill scripts)
+__pycache__/
+*.py[cod]
+
 # Node (in case you ever add a build tool)
 node_modules/

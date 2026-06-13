@@ -1,0 +1,33 @@
+---
+description: Privacy-by-construction. Never upload raw contacts. Never init AdMob before age-gate + UMP.
+globs: ["apps/**/Assets/Scripts/Social/**/*.cs", "apps/**/Assets/Scripts/Auth/**/*.cs", "backend/src/services/social/**/*.ts", "backend/src/rest/social*.ts"]
+alwaysApply: false
+---
+
+# R11 — Privacy by construction
+
+## Contacts
+
+- **Never** send raw phone numbers or emails to the server.
+- Compute **SHA-256** locally (Unity-side) on every contact identifier before any upload.
+- Server endpoint accepts only `{ hashes: string[] }`.
+- Server stores **hashes only** under a GSI (`userContactHashes`).
+- Settings → "Disconnect contacts" deletes the user's hash entries server-side.
+
+## Ads (AdMob + UMP)
+
+Order of operations:
+
+1. Age-gate (first run only; persisted locally and on user document).
+2. UMP consent (EEA + comparable regions).
+3. AdMob initialization.
+4. Ad requests.
+
+**Banned:** initializing AdMob, requesting ads, or setting an ad unit ID before consent has been recorded.
+
+## Notifications
+
+- Request OS permission only after the user has reached at least the Home screen, with a clear pre-prompt explaining why.
+- Topic format: `match.<matchId>` and `general` (opt-out in Settings).
+
+See [`docs/PRIVACY_AND_LEGAL.md`](mdc:docs/PRIVACY_AND_LEGAL.md) for the full data inventory and Play Data Safety mapping.

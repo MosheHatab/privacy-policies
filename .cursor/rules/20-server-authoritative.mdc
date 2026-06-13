@@ -1,0 +1,23 @@
+---
+description: Match phase, scoring, and timers are server-authoritative. Clients render and reconcile.
+globs: ["backend/src/services/**/*.ts", "backend/src/socket/**/*.ts", "apps/**/Assets/Scripts/Match/**/*.cs", "apps/**/Assets/Scripts/Network/**/*.cs"]
+alwaysApply: false
+---
+
+# R6 — Server-authoritative state
+
+- **Match phases** (`lobby → word_pick → drawing → waiting → guess → result → next round`) live in `MatchService` on the server.
+- **Scoring** is computed and persisted by the server in the `result` transition. Clients display it; clients never compute it.
+- **Guess timer** is started by the server when entering `guess` and is the single arbiter of timeout. Clients display remaining seconds based on `phase_started_at` from the server, never their own clock.
+- **Word selection** is server-emitted (3 candidates); the chosen word is **hidden** from the guesser at all times.
+- **Match leave** must always go through `match:leave` server event; the client cannot "leave by navigating away". The confirmation `ModalSheet` is UX only.
+
+## Wire contract
+
+See [`docs/MATCH_FLOW.md`](mdc:docs/MATCH_FLOW.md) for the full event list. Validate every incoming event against:
+
+1. **Sender role** (e.g. `word_choose` only from drawer).
+2. **Current phase** (e.g. `guess:submit` only when `phase === 'guess'`).
+3. **Schema** (zod / runtime validator).
+
+Reject invalid events with `error { code, message }` and **do not** advance state.

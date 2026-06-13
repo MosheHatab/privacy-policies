@@ -1,100 +1,387 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="mono">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HIE-YA — Privacy Policies</title>
+  <meta name="description" content="Privacy policies for apps published by HIE-YA. Transparent, plain-language summaries of what each app collects and why.">
+  <title>HIE-YA — App Privacy Policies</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    // Apply saved theme + mode before paint to avoid flash-of-wrong-theme.
+    (function () {
+      var r = document.documentElement;
+      try {
+        r.setAttribute('data-theme', localStorage.getItem('pp-theme') || 'mono');
+        var m = localStorage.getItem('pp-mode');
+        if (!m) m = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        r.setAttribute('data-mode', m);
+      } catch (e) { r.setAttribute('data-mode', 'light'); }
+    })();
+  </script>
+
   <style>
+    :root {
+      /* Neutrals — light (default) */
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --ink: #09090B;
+      --ink-strong: #18181B;
+      --ink-muted: #3F3F46;
+      --ink-soft: #71717A;
+      --border: #E4E4E7;
+      --border-strong: #D4D4D8;
+      --shadow-sm: 0 1px 2px rgba(9, 9, 11, 0.05);
+      --shadow-md: 0 10px 30px rgba(9, 9, 11, 0.10);
+
+      /* Theme accents (default: mono) */
+      --accent-base: #2563EB;
+      --accent2-base: #18181B;
+
+      /* Derived (auto-adapt to mode + theme) */
+      --accent: var(--accent-base);
+      --accent2: var(--accent2-base);
+      --accent-soft: color-mix(in srgb, var(--accent) 12%, var(--surface));
+      --accent2-soft: color-mix(in srgb, var(--accent2) 14%, var(--surface));
+      --accent-ring: color-mix(in srgb, var(--accent) 38%, transparent);
+
+      --radius: 16px;
+      --maxw: 720px;
+    }
+
+    /* ---- Color themes ---- */
+    :root[data-theme="indigo"] { --accent-base: #4F46E5; --accent2-base: #F97316; }
+    :root[data-theme="orange"] { --accent-base: #F97316; --accent2-base: #2563EB; }
+    :root[data-theme="purple"] { --accent-base: #7C3AED; --accent2-base: #F43F5E; }
+    :root[data-theme="mono"]   { --accent-base: #2563EB; --accent2-base: #18181B; }
+
+    /* ---- Dark mode: via OS (no override) OR explicit data-mode ---- */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-mode="light"]) {
+        --bg: #09090B; --surface: #18181B; --ink: #FAFAFA; --ink-strong: #FFFFFF;
+        --ink-muted: #D4D4D8; --ink-soft: #A1A1AA; --border: #27272A; --border-strong: #3F3F46;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.55);
+        --accent: color-mix(in srgb, var(--accent-base), white 22%);
+        --accent2: color-mix(in srgb, var(--accent2-base), white 18%);
+      }
+    }
+    :root[data-mode="dark"] {
+      --bg: #09090B; --surface: #18181B; --ink: #FAFAFA; --ink-strong: #FFFFFF;
+      --ink-muted: #D4D4D8; --ink-soft: #A1A1AA; --border: #27272A; --border-strong: #3F3F46;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4); --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.55);
+      --accent: color-mix(in srgb, var(--accent-base), white 22%);
+      --accent2: color-mix(in srgb, var(--accent2-base), white 18%);
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 60px 24px;
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       line-height: 1.7;
-      color: #2d2d2d;
-      background: #fafafa;
-      text-align: center;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
-    .logo {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 6px;
+
+    .wrap {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 80px 24px 48px;
+      flex: 1;
+    }
+
+    /* ---- Appearance dock ---- */
+    .theme-dock {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 85%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+    }
+    .swatches { display: flex; gap: 6px; }
+    .swatch {
+      width: 20px; height: 20px; padding: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch[aria-pressed="true"] { border-color: var(--ink-strong); }
+    .swatch:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-ring); }
+    .swatch.indigo { background: #4F46E5; }
+    .swatch.orange { background: #F97316; }
+    .swatch.purple { background: #7C3AED; }
+    .swatch.mono   { background: #2563EB; }
+    .dock-divider { width: 1px; height: 22px; background: var(--border); }
+    .mode-toggle {
+      display: grid; place-items: center;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-strong);
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .mode-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .mode-toggle:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-ring); }
+    .mode-toggle svg { width: 18px; height: 18px; }
+    .mode-toggle .moon { display: none; }
+    :root[data-mode="dark"] .mode-toggle .moon { display: block; }
+    :root[data-mode="dark"] .mode-toggle .sun { display: none; }
+
+    /* ---- Brand / hero ---- */
+    .brand { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+    .brand .mark {
+      display: grid; place-items: center;
+      width: 46px; height: 46px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-family: "Fredoka", sans-serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand .name {
+      font-family: "Fredoka", sans-serif;
+      font-weight: 600;
+      font-size: 1.55rem;
+      letter-spacing: -0.2px;
+      color: var(--ink-strong);
+    }
+
+    h1 {
+      font-family: "Fredoka", sans-serif;
+      font-weight: 600;
+      font-size: clamp(2.1rem, 5.5vw, 2.8rem);
+      line-height: 1.1;
       letter-spacing: -0.5px;
+      color: var(--ink-strong);
+      margin-bottom: 14px;
     }
-    .tagline {
-      font-size: 1rem;
-      color: #888;
-      margin-bottom: 48px;
+    .lead { font-size: 1.12rem; color: var(--ink-muted); max-width: 56ch; margin-bottom: 22px; }
+
+    .trust {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--ink-muted);
+      margin-bottom: 56px;
     }
-    h2 {
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #aaa;
-      margin-bottom: 20px;
+    .trust svg { width: 16px; height: 16px; color: var(--accent2); }
+
+    .section-label {
+      display: flex; align-items: center; gap: 12px;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.82rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--ink-soft);
+      margin-bottom: 18px;
     }
-    .app-list {
-      list-style: none;
-      padding: 0;
-    }
-    .app-list li {
-      margin-bottom: 12px;
-    }
-    .app-list a {
-      display: block;
-      padding: 16px 24px;
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      color: #1a1a1a;
+    .section-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    /* ---- App list ---- */
+    .app-list { list-style: none; display: grid; gap: 14px; }
+    .app-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--ink);
       text-decoration: none;
-      font-size: 1.05rem;
-      font-weight: 500;
-      transition: box-shadow 0.15s, border-color 0.15s;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
-    .app-list a:hover {
-      border-color: #1a73e8;
-      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.12);
+    .app-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .app-card:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-ring), var(--shadow-md); }
+
+    .app-icon {
+      flex-shrink: 0;
+      display: grid; place-items: center;
+      width: 48px; height: 48px;
+      border-radius: 13px;
+      background: var(--accent-soft);
+      color: var(--accent);
     }
-    .app-list .description {
-      font-size: 0.85rem;
-      color: #888;
-      font-weight: 400;
-      margin-top: 2px;
-    }
+    .app-icon svg { width: 24px; height: 24px; }
+    .app-body { flex: 1; min-width: 0; }
+    .app-name { font-family: "Fredoka", sans-serif; font-weight: 500; font-size: 1.1rem; color: var(--ink-strong); }
+    .app-desc { font-size: 0.92rem; color: var(--ink-soft); }
+    .app-arrow { flex-shrink: 0; color: var(--ink-soft); transition: transform 0.2s ease, color 0.2s ease; }
+    .app-arrow svg { width: 20px; height: 20px; display: block; }
+    .app-card:hover .app-arrow { transform: translateX(3px); color: var(--accent); }
+
     footer {
-      margin-top: 60px;
-      font-size: 0.85rem;
-      color: #bbb;
+      width: 100%; max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 28px 24px 40px;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem; color: var(--ink-soft);
+      display: flex; flex-wrap: wrap; gap: 6px 16px;
+      align-items: center; justify-content: space-between;
+    }
+    footer a { color: var(--ink-muted); text-decoration: none; font-weight: 700; }
+    footer a:hover { color: var(--accent); }
+    footer a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 64px 18px 32px; }
+      .theme-dock { top: 12px; right: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
     }
   </style>
 </head>
 <body>
 
-  <div class="logo">HIE-YA</div>
-  <p class="tagline">App Privacy Policies</p>
+  <div class="theme-dock" role="group" aria-label="Appearance settings">
+    <div class="swatches" role="group" aria-label="Color theme">
+      <button type="button" class="swatch mono" data-theme="mono" title="Blue" aria-label="Blue theme"></button>
+      <button type="button" class="swatch purple" data-theme="purple" title="Purple" aria-label="Purple theme"></button>
+    </div>
+    <span class="dock-divider" aria-hidden="true"></span>
+    <button type="button" class="mode-toggle" aria-label="Toggle dark mode">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
 
-  <h2>Our Apps</h2>
-  <ul class="app-list">
-    <li>
-      <a href="mechanical-keyboard-simulator/">
-        Mechanical Keyboard Simulator
-        <div class="description">Fun keyboard simulator with sounds, colors &amp; levels</div>
-      </a>
-    </li>
-    <!-- Add future apps here:
-    <li>
-      <a href="future-app-name/">
-        Future App Name
-        <div class="description">Short description of the app</div>
-      </a>
-    </li>
-    -->
-  </ul>
+  <main class="wrap">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">H</span>
+      <span class="name">HIE-YA</span>
+    </div>
 
-  <footer>&copy; 2026 HIE-YA. All rights reserved.</footer>
+    <h1>App Privacy Policies</h1>
+    <p class="lead">Plain-language privacy policies for every game we publish. Pick an app below to read exactly what it collects, why, and how to request deletion.</p>
+
+    <span class="trust">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      We never sell your data
+    </span>
+
+    <h2 class="section-label">Our Apps</h2>
+    <ul class="app-list">
+      <li>
+        <a class="app-card" href="mechanical-keyboard-simulator/">
+          <span class="app-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+              <path d="M6 10h0M10 10h0M14 10h0M18 10h0M6 14h0M18 14h0"></path>
+              <path d="M9 14h6"></path>
+            </svg>
+          </span>
+          <span class="app-body">
+            <span class="app-name">Mechanical Keyboard Simulator</span>
+            <span class="app-desc">Fun keyboard simulator with sounds, colors &amp; levels</span>
+          </span>
+          <span class="app-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"></path>
+            </svg>
+          </span>
+        </a>
+      </li>
+      <!-- Add future apps here:
+      <li>
+        <a class="app-card" href="future-app-name/">
+          <span class="app-icon" aria-hidden="true"> ... svg ... </span>
+          <span class="app-body">
+            <span class="app-name">Future App Name</span>
+            <span class="app-desc">Short description of the app</span>
+          </span>
+          <span class="app-arrow" aria-hidden="true"> ... arrow svg ... </span>
+        </a>
+      </li>
+      -->
+    </ul>
+  </main>
+
+  <footer>
+    <span>&copy; 2026 HIE-YA. All rights reserved.</span>
+    <a href="mailto:moshe.hatab.projects@gmail.com">moshe.hatab.projects@gmail.com</a>
+  </footer>
+
+  <script>
+    (function () {
+      var r = document.documentElement;
+      var hadModeOverride = false;
+      try { hadModeOverride = !!localStorage.getItem('pp-mode'); } catch (e) {}
+
+      function setTheme(t) {
+        r.setAttribute('data-theme', t);
+        try { localStorage.setItem('pp-theme', t); } catch (e) {}
+        document.querySelectorAll('.swatch').forEach(function (s) {
+          s.setAttribute('aria-pressed', s.dataset.theme === t ? 'true' : 'false');
+        });
+      }
+
+      function currentMode() { return r.getAttribute('data-mode') === 'dark' ? 'dark' : 'light'; }
+
+      function syncModeLabel() {
+        var btn = document.querySelector('.mode-toggle');
+        if (btn) btn.setAttribute('aria-label', currentMode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+
+      // Initialise active states from current attributes (no writes).
+      document.querySelectorAll('.swatch').forEach(function (s) {
+        s.setAttribute('aria-pressed', s.dataset.theme === (r.getAttribute('data-theme') || 'mono') ? 'true' : 'false');
+        s.addEventListener('click', function () { setTheme(s.dataset.theme); });
+      });
+      syncModeLabel();
+
+      document.querySelector('.mode-toggle').addEventListener('click', function () {
+        var next = currentMode() === 'dark' ? 'light' : 'dark';
+        r.setAttribute('data-mode', next);
+        hadModeOverride = true;
+        try { localStorage.setItem('pp-mode', next); } catch (e) {}
+        syncModeLabel();
+      });
+
+      // Keep following the OS until the user explicitly overrides.
+      if (!hadModeOverride && window.matchMedia) {
+        matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+          if (hadModeOverride) return;
+          r.setAttribute('data-mode', e.matches ? 'dark' : 'light');
+          syncModeLabel();
+        });
+      }
+    })();
+  </script>
 
 </body>
 </html>

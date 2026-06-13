@@ -1,0 +1,40 @@
+---
+description: Unity screens compose only from UIKit components. Restricted shell set. Global chrome (Logo + Home) on every full-screen surface except Home/Welcome.
+globs: ["apps/**/Assets/Scripts/UI/**/*.cs", "apps/**/Assets/UIKit/**", "packages/base-kit/**/UI/**/*.cs"]
+alwaysApply: false
+---
+
+# R2/R3/R4 — UIKit, shells, global chrome
+
+## R2 — UIKit-only
+
+Screens compose **only** from these components (one canonical prefab per component in `Assets/UIKit/`):
+
+`AppHeader`, `PrimaryButton`, `SecondaryButton`, `IconButton`, `InputField`, `ListRow`, `Tabs`, `BadgeChip`, `ModalSheet`, `Toast`.
+
+**Banned:**
+
+- Raw `UnityEngine.UI.Button` + custom colors directly on a screen.
+- One-off Text styles (use the typography variants on the UIKit `Text` wrapper).
+- Padding values not from the spacing token scale (`space.0..8`).
+
+If you genuinely need a new visual primitive, **first** add it to UIKit + [`docs/UI_CONTRACT.md`](mdc:docs/UI_CONTRACT.md), **then** consume it.
+
+## R3 — Restricted shell set
+
+Every full-screen surface uses exactly one of:
+
+- `FullScreenWithHeader`
+- `ContentScrollShell` (often nested inside `FullScreenWithHeader`)
+- `SplitTopCanvasBottomControls`
+- `ModalSheet`
+
+Game screens supply **content slots only**. They do not invent new outer layouts. See [`docs/SCREENS.md`](mdc:docs/SCREENS.md) for the screen → shell mapping.
+
+## R4 — Global chrome
+
+- Every full-screen surface uses `AppHeader` = **Logo** + optional center slot + **Home** control, **except**:
+  - **Home** (no Home-to-self).
+  - **Welcome / splash** (entry point; no Home).
+- In an active match, tapping Home opens a `ModalSheet` confirmation **before** any navigation. Only after server `ack` does the client navigate Home and clear local match state. See [`docs/MATCH_FLOW.md`](mdc:docs/MATCH_FLOW.md#leave-match-flow).
+- Privacy + Terms reachable from Welcome footer, Home footer, and Settings.

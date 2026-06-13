@@ -1,0 +1,35 @@
+---
+description: Let's Guess monorepo overview. Always-on rule reminding agents which docs are canonical and which rules to consult per file type.
+alwaysApply: true
+---
+
+# Let's Guess — Agent overview
+
+You are working in the **Let's Guess** franchise monorepo. The first app is **Draw Something** (Android-first, Unity client + Node/TS backend).
+
+## Always read these first
+
+- [`docs/PLAN.md`](mdc:docs/PLAN.md) — architecture plan, locked decisions.
+- [`docs/AGENTS.md`](mdc:docs/AGENTS.md) — canonical narrative for every agent rule.
+- [`docs/UI_CONTRACT.md`](mdc:docs/UI_CONTRACT.md) — design tokens + component contract.
+- [`docs/MATCH_FLOW.md`](mdc:docs/MATCH_FLOW.md) — server-authoritative state machine.
+
+## Locked architectural decisions (do not relitigate without explicit user request)
+
+- Client = **Unity (C#) + URP**.
+- Backend = **Node.js + TypeScript + Socket.io**.
+- Identity = **Google Play Games** (Android MVP) behind an `AuthProvider` adapter.
+- Data home = **AWS-first** (DynamoDB + S3 + FCM). **No** Firestore for core MVP state.
+- Single source of magic values = `backend/src/config/gameConfig.ts` (server) mirrored by `apps/draw-something/Assets/Scripts/Config/GameMatchConfig.cs` (client). **Defaults: 10 points per correct guess, 30 seconds guess timer.**
+
+## Core invariants
+
+- **Server is authoritative** for match phase, scores, timers, validity. Clients render and reconcile.
+- **Magic values forbidden in business code.** Reference the config object instead. Tests in `backend/tests/gameConfig.test.ts` lock the defaults.
+- **Screens compose from `UIKit` only.** No ad-hoc styling, no one-off buttons.
+- **Global chrome:** `AppHeader` (Logo + Home) on every full-screen surface except Home itself and Welcome.
+- **In-match Home click:** confirmation `ModalSheet` → `match:leave` → server cleanup → opponent notified → local cleanup → navigate Home.
+
+## Scoped rules
+
+Specific rules auto-attach by glob — see other `.mdc` files in this folder.

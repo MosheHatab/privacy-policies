@@ -1,0 +1,27 @@
+---
+description: Magic values (points, timer, coins) must come from a single config source. Auto-attached to backend src + Unity scripts.
+globs: ["backend/src/**/*.ts", "backend/tests/**/*.ts", "apps/**/Assets/Scripts/**/*.cs", "packages/base-kit/**/*.cs"]
+alwaysApply: false
+---
+
+# R5 — Single source of magic values
+
+**Forbidden** in any business-logic file:
+
+- Numeric literals for **points per correct guess** (use `gameConfig.pointsPerCorrectGuess` / `GameMatchConfig.PointsPerCorrectGuess`).
+- Numeric literals for **guess phase seconds** (use `gameConfig.guessPhaseSeconds` / `GameMatchConfig.GuessPhaseSeconds`).
+- Numeric literals for **coin starting balance**, **ad reward coins**, **palette prices**, **anti-abuse caps**.
+
+**Allowed** literals (with comments):
+
+- Test fixtures asserting the locked **default** values (e.g. `expect(gameConfig.pointsPerCorrectGuess).toBe(10)`).
+- Loop counts, array indices, and clearly local algorithm constants that are not gameplay tunables.
+
+## Where to add a new tunable
+
+1. Add the field to [`backend/src/config/gameConfig.ts`](mdc:backend/src/config/gameConfig.ts).
+2. Add a unit test in [`backend/tests/gameConfig.test.ts`](mdc:backend/tests/gameConfig.test.ts) that locks the default value.
+3. Mirror the field in [`apps/draw-something/Assets/Scripts/Config/GameMatchConfig.cs`](mdc:apps/draw-something/Assets/Scripts/Config/GameMatchConfig.cs) or `GameEconomyConfig.cs`.
+4. Reference the config object — never the literal — in any consumer.
+
+Defaults locked today: **10 points** per correct guess, **30 seconds** guess timer.

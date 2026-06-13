@@ -1,0 +1,35 @@
+---
+description: Small single-purpose functions; clear naming conventions for backend (TS) and Unity (C#).
+globs: ["backend/**/*.ts", "apps/**/*.cs", "packages/**/*.ts", "packages/**/*.cs"]
+alwaysApply: false
+---
+
+# R1/R12 — Functions and naming
+
+## R1 — Small functions
+
+- A function does **one** thing. If you need "and" in its name, split it.
+- Functions over ~40 lines or with ≥3 levels of nesting must be refactored.
+- Pure helpers go in `Util/` (Unity) or `src/util/` (backend), not in presenters or route handlers.
+- One exported responsibility per UI presenter / controller class.
+
+## R12 — Naming
+
+### Backend (TypeScript)
+
+- **Files:** `kebab-case.ts` for modules; `PascalCase.ts` is acceptable when the file exports a single class.
+- **Types / classes:** `PascalCase`.
+- **Variables / functions:** `camelCase`.
+- **Constants in config:** `camelCase` keys (e.g. `pointsPerCorrectGuess`).
+- **Match phase strings:** lowercase snake (`word_pick`, `guess`).
+
+### Unity (C#)
+
+- **Files:** `PascalCase.cs`, one public type per file.
+- **Public members:** `PascalCase`. Private fields: `_camelCase`.
+- **Async methods:** suffix `Async` and return `Task` or `UniTask`.
+
+## Test files
+
+- Backend: `*.test.ts` next to the unit (or under `tests/` mirroring the `src/` tree).
+- Always lock **default values** of gameplay tunables in tests so a casual edit can't change them by accident.
